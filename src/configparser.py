@@ -6,9 +6,12 @@ import json
 class ConfigParser:
 
     def parse_config(self):
+
         with open(sys.argv[1]) as config_file:
             config = json.load(config_file)
+
         self.data_file = config['data_file'].split()
+        self.n_data_file = config['n_data_file']
         self.verbose = int(config['verbose'])
         self.cbpm = config['cbpm'].split()
         self.n_cbpm = config['n_cbpm']
@@ -23,5 +26,8 @@ class ConfigParser:
 #            sys.exit(0)
         if (self.n_cbpm != len(self.cbpm)):
             print(' CONFIGURATION ERROR -- Mismatch between thee number of CBPM provided and the expected number')
+            sys.exit(0)
+        if (self.n_data_file != len(self.data_file)):
+            print(' CONFIGURATION ERROR -- Mismatch between thee number of file(s) provided ("data_file") and the expected number ("n_data_file")')
             sys.exit(0)
 

@@ -13,19 +13,32 @@ def main():
 
     raw_data = []
     button_data = []
+    merged_data = []
+
     for idx_cbpm in range(config.n_cbpm):
 
-        print('\n Analyzing CBPM: ', config.cbpm[idx_cbpm], '\n')
+        print(' <<<<                     >>>>')
+        print(' <<<< Analyzing CBPM:', config.cbpm[idx_cbpm], '>>>>')
+        print(' <<<<                     >>>>')
 
-        if (config.merge_data_file):
+        raw_data.append([])
+        button_data.append([])
+        
+        for idx_file in range(config.n_data_file):
+            
+            raw_data[idx_cbpm].append(dataparser.DataParser(config, config.data_file[idx_file], config.cbpm[idx_cbpm]))
+            raw_data[idx_cbpm][idx_file].parse_main_header()
+            raw_data[idx_cbpm][idx_file].extract_single_cbpm_data()
+            merged_data[idx_cbpm] += raw_data[idx_cbpm][0].self.button[0] + raw_data[idx_cbpm][1].self.button[0]
 
-            raw_data.append(dataparser.DataParser(config))
-            raw_data[idx_cbpm].parse_main_header()
-            raw_data[idx_cbpm].extract_single_cbpm_data(config.cbpm[idx_cbpm])
+            button_data[idx_cbpm].append(button.Button(raw_data[idx_cbpm][idx_file]))
+            button_data[idx_cbpm][idx_file].extract_button_information()
+            button_data[idx_cbpm][idx_file].calculate_vertical_centroid()
+            button_data[idx_cbpm][idx_file].calculate_horizontal_centroid()
+#            button_data[idx_cbpm][idx_file].button_fft()
 
-            button_data.append(button.Button(raw_data[idx_cbpm]))
-            button_data[idx_cbpm].extract_button_information()
-            button_data[idx_cbpm].calculate_vertical_centroid()
+
+merged_data = raw_data[idx_cbpm][0].self.button[0] + raw_data[idx_cbpm][1].self.button[0]
 
 
 
