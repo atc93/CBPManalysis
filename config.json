@@ -1,7 +1,6 @@
 {
 	"data_file":"data/RD-036548.dat data/RD-036550.dat",
         "n_data_file":2,
-        "merge_data_file":true,
         "analysis_type":"single",
 	"verbose": 1,
         "cbpm": "22W",

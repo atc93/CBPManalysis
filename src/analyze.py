@@ -1,32 +1,34 @@
-import src.dataparser as dataparser
+from src.dataparser import DataParser
 import src.constants as constants
 import matplotlib.pyplot as plt
 import src.plotting as plotting
 import numpy as np
 
-class Button(dataparser.DataParser):
+class Analyze(DataParser):
 
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, raw_button, config, idx_file):
+        self.raw_button = raw_button
+        self.config = config
         self.button_sum = []
         self.button = []
         self.std_button = []
         self.mean_button = []
+        self.idx_file = idx_file
 
-    def extract_button_information(self):
+    def raw_button_information(self):
         # extract individual buttons information
         # button 0 (or 3) is inner top
         # botton 1 (or 1) is inner bottom
         # bottom 2 (or 2) is outter bottom
         # button 3 (or 4)is outter top
-        if (self.data.config.verbose > 0):
+        if (self.config.verbose > 0):
             print('\n ---------------------')
             print(' | Raw button values |')
             print(' ---------------------\n')
 
         for i in range(4):
-            self.button.append(self.data.raw_data[:,i])
-            if (self.data.config.verbose > 0):
+            self.button.append(self.raw_button.data[:,i])
+            if (self.config.verbose > 0):
                 print(' Button #', i)
                 for boxcar_averaging_window in (1, 2, 4, 8, 16, 32, 64, 128):
                     data = self.boxcar_averaging(np.array(self.button[i]), boxcar_averaging_window)
@@ -35,8 +37,8 @@ class Button(dataparser.DataParser):
                         , ', std/mean: {0:0.5f}'.format(np.std(data)/np.mean(data)))
             self.perform_fft(np.array(self.button[i]), 'button ' + str(i), 'button_' + str(i))
 
-        for i in range(self.data.n_turns):
-            self.button_sum.append(self.button[0][i]+self.button[1][i]+self.button[2][i]+self.button[3][i])
+        self.button_sum = self.button[0]+self.button[1]+self.button[2]+self.button[3]
+
 
     @staticmethod
     def boxcar_averaging(data, averaging_window):
@@ -68,31 +70,32 @@ class Button(dataparser.DataParser):
 
             plt.grid(color='black', linestyle=':', linewidth=0.5, alpha=0.1)
             plt.grid(True)
-            plt.subplots_adjust(left=0.175, bottom=0.125, right=0.975, top=0.95, wspace=0, hspace=0)
             plt.plot(frequencies, fft)
-            plt.savefig('results/'+self.data.data_file[5:len(self.data.data_file)-4]+'_' + label + '_boxcar' + str(boxcar_averaging_window) + '.eps')
+            plt.savefig('results/'+self.config.data_file[self.idx_file][5:len(self.config.data_file[self.idx_file])-4]+'_' + label + '_boxcar' + str(boxcar_averaging_window) + '.eps')
             plt.close()
         
 
-    def calculate_vertical_centroid(self):
+    def vertical_centroid(self):
         self.vertical_centroid = []
-        for i in range(self.data.n_turns):
-            self.vertical_centroid.append(self.data.config.ky*(self.button[0][i]+self.button[3][i]-(self.button[1][i]+self.button[2][i]))/self.button_sum[i])
+        for i in range(self.config.n_turns):
+            self.vertical_centroid.append(self.config.ky*(self.button[0][i]+self.button[3][i]-(self.button[1][i]+self.button[2][i]))/self.button_sum[i])
         self.mean_vertical_centroid =  np.mean(self.vertical_centroid)
         self.std_vertical_centroid =  np.std(self.vertical_centroid)
         self.perform_fft(self.vertical_centroid, 'vertical centroid', 'vertical_centroid')
-        if (self.data.config.verbose > 0 ):
+        if (self.config.verbose > 0 ):
             print('\n ---------------------')
             print(' | Vertical centroid |')
             print(' ---------------------\n')        
             print(' y = {0:0.2f}'.format(self.mean_vertical_centroid), ' +- {0:0.2f}'.format(self.std_vertical_centroid), '(std) mm')
 
-    def calculate_horizontal_centroid(self):
+    def horizontal_centroid(self):
         self.horizontal_centroid = []
-        self.horizontal_centroid.append([self.data.config.kx*(self.button[2][i]+self.button[3][i]-(self.button[1][i]+self.button[0][i]))/self.button_sum[i] for i in range(self.data.n_turns)])
+        for i in range(self.config.n_turns):
+            self.horizontal_centroid.append(self.config.kx*(self.button[2][i]+self.button[3][i]-(self.button[1][i]+self.button[0][i]))/self.button_sum[i])
         self.mean_horizontal_centroid =  np.mean(self.horizontal_centroid)
         self.std_horizontal_centroid =  np.std(self.horizontal_centroid)
-        if (self.data.config.verbose > 0 ):
+        self.perform_fft(self.horizontal_centroid, 'horizontal centroid', 'horizontal_centroid')
+        if (self.config.verbose > 0 ):
             print('\n -----------------------')
             print(' | Horizontal centroid |')
             print(' -----------------------\n')        

@@ -18,7 +18,6 @@ class ConfigParser:
         self.analysis_type = config['analysis_type']
         self.kx = config['kx']
         self.ky = config['ky']
-        self.merge_data_file = config['merge_data_file']
 
     def check_config(self):
 #        if (self.analysis_type == 'single' and len(self.cbpm) != 1):
