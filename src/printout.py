@@ -1,4 +1,4 @@
-def print_welcome_message():
+def welcome_message():
 
     print('')
     print(' ------------------------------')
@@ -10,3 +10,8 @@ def print_welcome_message():
     print(' ------------------------------')
     print('')
 
+def analyzed_cbpm(cbpm):
+
+    print(' <<<<                     >>>>')
+    print(' <<<< Analyzing CBPM:', cbpm, '>>>>')
+    print(' <<<<                     >>>>')
