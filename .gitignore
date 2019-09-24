@@ -7,8 +7,10 @@
 *.png
 *.pyc
 data/*
+!data/.gitkeep
 config/*
 results/*
+!results/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
