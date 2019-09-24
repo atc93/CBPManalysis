@@ -3,6 +3,7 @@ import src.constants as constants
 import matplotlib.pyplot as plt
 import src.plotting as plotting
 import numpy as np
+import math
 
 class Analyze(DataParser):
 
@@ -35,6 +36,32 @@ class Analyze(DataParser):
                     print(' boxcar ', boxcar_averaging_window, ' -- mean: {0:0.2f} ADU'.format(np.mean(data)), 
                         ', std: {0:0.2f} ADU'.format(np.std(data))
                         , ', std/mean: {0:0.5f}'.format(np.std(data)/np.mean(data)))
+
+                    # plot raw button reading distribution
+                    boxcar_title = 'button ' + str(i) + '\nboxcar ' + str(boxcar_averaging_window)
+                    fig, ax = plotting.create_figure(boxcar_title, 'Button reading [ADU]', '#')
+                    plt.hist(data, bins=int(math.sqrt(len(data))))
+                    plt.savefig('results/' + self.config.data_file[self.idx_file][5:len(
+                        self.config.data_file[self.idx_file]) - 4] + '_' + label + '_boxcar' + str(
+                        boxcar_averaging_window) + '_rawADU.eps')
+                    plt.close()
+
+                    # plot raw button reading as a function of turn #
+                    fig, ax = plotting.create_figure(boxcar_title, 'Turn #', 'Button reading [ADU]')
+                    plt.plot([i for i in range(len(data))], data)
+                    plt.savefig('results/' + self.config.data_file[self.idx_file][5:len(
+                        self.config.data_file[self.idx_file]) - 4] + '_' + label + '_boxcar' + str(
+                        boxcar_averaging_window) + '_rawADUtrend.eps')
+                    plt.close()
+
+                    # plot average subtracted raw button reading as a function of turn #
+                    fig, ax = plotting.create_figure(boxcar_title, 'Turn #', 'Button reading [ADU]')
+                    plt.plot([i for i in range(len(data))], data-np.mean(data))
+                    plt.savefig('results/' + self.config.data_file[self.idx_file][5:len(
+                        self.config.data_file[self.idx_file]) - 4] + '_' + label + '_boxcar' + str(
+                        boxcar_averaging_window) + '_rawADUtrendAvgSubtracted.eps')
+                    plt.close()
+
             self.perform_fft(np.array(self.button[i]), 'button ' + str(i), 'button_' + str(i))
 
         self.button_sum = self.button[0]+self.button[1]+self.button[2]+self.button[3]
@@ -64,14 +91,15 @@ class Analyze(DataParser):
             frequencies = [int(i)*freq_step/1000 for i in range(0, len(fft))] # in from Hz to kHz
             
             boxcar_title = title +'\nboxcar ' + str(boxcar_averaging_window)
-            fig, ax = plotting.create_figure(boxcar_title, 'Frequency [kHz]', 'FFT magnitude (log base 10)', label)
+            fig, ax = plotting.create_figure(boxcar_title, 'Frequency [kHz]', 'FFT magnitude (log base 10)')
             ax.set_yscale('log')
             ax.set_xlim(frequencies[0], frequencies[len(frequencies)-1])
 
             plt.grid(color='black', linestyle=':', linewidth=0.5, alpha=0.1)
             plt.grid(True)
             plt.plot(frequencies, fft)
-            plt.savefig('results/'+self.config.data_file[self.idx_file][5:len(self.config.data_file[self.idx_file])-4]+'_' + label + '_boxcar' + str(boxcar_averaging_window) + '.eps')
+            plt.savefig('results/'+self.config.data_file[self.idx_file][5:len(self.config.data_file[self.idx_file])-4]+
+                        '_' + label + '_boxcar' + str(boxcar_averaging_window) + '_fft.eps')
             plt.close()
         
 

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def create_figure(title, xaxis_label, yaxis_label, label):
+def create_figure(title, xaxis_label, yaxis_label):
 
     # rcParams need to be changed before calling the rest
     plt.rcParams['figure.figsize'] = [9, 6]
