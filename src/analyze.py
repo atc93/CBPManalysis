@@ -31,14 +31,16 @@ class Analyze(DataParser):
             self.button.append(self.raw_button.data[:,i])
             if (self.config.verbose > 0):
                 print(' Button #', i)
-                for boxcar_averaging_window in (1, 2, 4, 8, 16, 32, 64, 128):
+                for j in range (self.config.boxcar_avg_maxpow2+1):
+                    boxcar_averaging_window = int(math.pow(2, j))
                     data = self.boxcar_averaging(np.array(self.button[i]), boxcar_averaging_window)
-                    print(' boxcar ', boxcar_averaging_window, ' -- mean: {0:0.2f} ADU'.format(np.mean(data)), 
-                        ', std: {0:0.2f} ADU'.format(np.std(data))
-                        , ', std/mean: {0:0.5f}'.format(np.std(data)/np.mean(data)))
+                    print(' boxcar ', boxcar_averaging_window, ' -- mean: {0:0.2f}'.format(np.mean(data)),
+                        ' +- {0:0.2f}'.format(np.std(data)/math.sqrt(len(data))), '(SE) ADU, std: {0:0.2f} ADU'.format(np.std(data))
+                        , '+- {0:0.2f} (SE) ADU'.format(np.std(data)/math.sqrt(2*len(data)-2)) + ', std/mean: {0:0.5f}'.format(np.std(data)/np.mean(data)))
 
                     # plot raw button reading distribution
                     boxcar_title = 'button ' + str(i) + '\nboxcar ' + str(boxcar_averaging_window)
+                    label = 'button_' + str(i)
                     fig, ax = plotting.create_figure(boxcar_title, 'Button reading [ADU]', '#')
                     plt.hist(data, bins=int(math.sqrt(len(data))))
                     plt.savefig('results/' + self.config.data_file[self.idx_file][5:len(
@@ -80,8 +82,8 @@ class Analyze(DataParser):
 
     def perform_fft(self, data, title, label):
 
-        for boxcar_averaging_window in (1, 16, 32, 64, 128):
-            
+        for j in range(self.config.boxcar_avg_maxpow2 + 1):
+            boxcar_averaging_window = int(math.pow(2, j))
             #fft_data = self.boxcar_averaging(np.array(data), boxcar_averaging_window)
             fft_data = self.boxcar_averaging(data, boxcar_averaging_window)
             fft = np.abs(np.fft.fft(fft_data))
@@ -107,6 +109,18 @@ class Analyze(DataParser):
         self.vertical_centroid = []
         for i in range(self.config.n_turns):
             self.vertical_centroid.append(self.config.ky*(self.button[0][i]+self.button[3][i]-(self.button[1][i]+self.button[2][i]))/self.button_sum[i])
+
+        for j in range(self.config.boxcar_avg_maxpow2 + 1):
+            boxcar_averaging_window = int(math.pow(2, j))
+            data = self.boxcar_averaging(np.array(self.vertical_centroid), boxcar_averaging_window)
+            # plot average subtracted raw button reading as a function of turn #
+            boxcar_title = 'vertical centroid\nboxcar ' + str(boxcar_averaging_window)
+            fig, ax = plotting.create_figure(boxcar_title, 'Turn #', 'Vertical centroid [mm]')
+            plt.plot([i for i in range(len(data))], data - np.mean(data))
+            plotting.save_figure(self.config.data_file[self.idx_file], 'vertical_centroid', 'trendAvgSubtracted',
+                                 boxcar_averaging_window)
+            plt.close()
+
         self.mean_vertical_centroid =  np.mean(self.vertical_centroid)
         self.std_vertical_centroid =  np.std(self.vertical_centroid)
         self.perform_fft(self.vertical_centroid, 'vertical centroid', 'vertical_centroid')

@@ -2,9 +2,10 @@
 	"data_file":"data/RD-036548.dat data/RD-036550.dat",
         "n_data_file":2,
         "analysis_type":"single",
-	"verbose": 1,
+	"verbose": 2,
         "cbpm": "22W",
         "n_cbpm":1,
+        "boxcar_avg_maxpow2": 6,
         "kx":25.9,
         "ky":19.8
 }

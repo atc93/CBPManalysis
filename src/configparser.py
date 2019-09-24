@@ -1,5 +1,7 @@
-import sys 
 import json
+import sys
+from pprint import pprint
+
 
 # read in configuration file
 
@@ -18,15 +20,20 @@ class ConfigParser:
         self.analysis_type = config['analysis_type']
         self.kx = config['kx']
         self.ky = config['ky']
+        self.boxcar_avg_maxpow2 = int(config['boxcar_avg_maxpow2'])
 
     def check_config(self):
-#        if (self.analysis_type == 'single' and len(self.cbpm) != 1):
-#            print(' CONFIGURATION ERROR -- Expect only 1 CBPM for a single CBPM analysis')
-#            sys.exit(0)
-        if (self.n_cbpm != len(self.cbpm)):
+
+        if self.verbose > 1:
+            self.dump()
+        if self.n_cbpm != len(self.cbpm):
             print(' CONFIGURATION ERROR -- Mismatch between thee number of CBPM provided and the expected number')
             sys.exit(0)
-        if (self.n_data_file != len(self.data_file)):
-            print(' CONFIGURATION ERROR -- Mismatch between thee number of file(s) provided ("data_file") and the expected number ("n_data_file")')
+        if self.n_data_file != len(self.data_file):
+            print(
+                ' CONFIGURATION ERROR -- Mismatch between thee number of file(s) provided ("data_file") '
+                'and the expected number ("n_data_file")')
             sys.exit(0)
 
+    def dump(self):
+        pprint(vars(self))

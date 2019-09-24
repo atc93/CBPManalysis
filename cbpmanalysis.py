@@ -1,5 +1,4 @@
 # standard library imports
-from pprint import pprint
 import sys
 
 # local application imports
@@ -29,7 +28,6 @@ def main():
             raw_button_data[idx_cbpm].append(DataParser(config, idx_file, idx_cbpm))
             raw_button_data[idx_cbpm][idx_file].parse_main_header()
             raw_button_data[idx_cbpm][idx_file].extract_single_cbpm_data()
-            pprint(vars(config))
 
             analyze[idx_cbpm].append(Analyze(raw_button_data[idx_cbpm][idx_file], config, idx_file))
             analyze[idx_cbpm][idx_file].raw_button_information()

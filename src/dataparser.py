@@ -53,7 +53,7 @@ class DataParser(ConfigParser):
 
             if (analyze_data and turn_counter < self.config.n_turns):
                 turn_counter += 1
-                if (self.config.verbose > 1):
+                if (self.config.verbose > 3):
                     print(turn_counter)
                 split_line = line.split()
                 self.data.append([int(split_line[idx]) for idx in range(2,6)])

@@ -20,3 +20,8 @@ def create_figure(title, xaxis_label, yaxis_label):
     plt.ylabel(yaxis_label)
 
     return fig, ax
+
+def save_figure(data_file, type, label, boxcar_averaging_window):
+
+    plt.savefig('results/' + data_file[5:len(data_file) - 4] + '_' + type + '_boxcar'
+                + str(boxcar_averaging_window) + '_' + label + '.eps')
