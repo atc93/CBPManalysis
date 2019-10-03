@@ -2,6 +2,7 @@ from src.configparser import ConfigParser
 import re
 import sys
 import numpy as np
+import src.util as util
 
 # class that parses the data file to extract
 # the per-button information
@@ -14,27 +15,34 @@ class DataParser(ConfigParser):
         self.cbpm = config.cbpm[idx_cbpm]
         self.data = []
 
+        self.check_input_file()
+
     def check_input_file(self):
             try:
                 open(self.data_file, 'r')
-                print('\n Input text file ', self.data_file, 'opened successfully')
+                print('\n   Input text file ', self.data_file, 'opened successfully')
             except:
-                print('ERROR -- could not open file: ', self.data_file)
+                print('   ERROR -- could not open file: ', self.data_file)
                 sys.exit(0)
 
     def parse_main_header(self):
-
-        self.check_input_file()
 
         file_object = open(self.data_file, 'r')
 
         # retrieve number of turns
         for line in file_object:
+            if re.search('Timestamp', line):
+                split_line = line.split()
+                self.config.timestamp = split_line[2:7] # add n_turns information to the config object
+                self.config.timestamp = str(self.config.timestamp[0]) + str(self.config.timestamp[1]) \
+                                        + str(self.config.timestamp[2]) + ' ' + str(self.config.timestamp[3])
+                if (self.config.verbose > 0 ):
+                    print('   Timestamp: ', self.config.timestamp)
             if re.search('Number_of_Turns', line):
                 split_line = line.split()
                 self.config.n_turns = int(split_line[2]) # add n_turns information to the config object
                 if (self.config.verbose > 0 ):
-                    print(' Number of turns: ', self.config.n_turns)
+                    print('   Number of turns: ', self.config.n_turns)
                 break
 
         file_object.close()
@@ -61,7 +69,7 @@ class DataParser(ConfigParser):
                 split_line = line.split()
                 if (split_line[2] == self.cbpm):
                     if (self.config.verbose > 0 ):
-                        print(' Found data for CBPM: ', self.cbpm)
+                        print('   Found data for CBPM: ', self.cbpm)
                     count_header = True
 
             if (count_header):

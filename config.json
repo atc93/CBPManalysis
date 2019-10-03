@@ -1,11 +1,11 @@
 {
-	"data_file":"data/RD-036548.dat data/RD-036550.dat",
-        "n_data_file":2,
-        "analysis_type":"single",
+	"data_file":"data/RD-063137.dat",
+        "n_data_file":1,
+        "analysis_type":"triplet",
 	"verbose": 2,
-        "cbpm": "22W",
-        "n_cbpm":1,
-        "boxcar_avg_maxpow2": 6,
+        "cbpm": "12W2 12W3 12W",
+        "n_cbpm":3,
+        "boxcar_avg_maxpow2": 0,
         "kx":25.9,
         "ky":19.8
 }
