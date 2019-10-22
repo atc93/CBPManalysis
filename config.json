@@ -1,11 +1,14 @@
 {
-	"data_file":"data/RD-063137.dat",
+	"data_file":"data/RD-063172.dat",
         "n_data_file":1,
+        "analyze_centroid": "vertical",
         "analysis_type":"triplet",
+        "pedestal_correction": false,
 	"verbose": 2,
         "cbpm": "12W2 12W3 12W",
         "n_cbpm":3,
-        "boxcar_avg_maxpow2": 0,
+        "apply_boxcar_avg":false,
+        "boxcar_avg": 1,
         "kx":25.9,
         "ky":19.8
 }

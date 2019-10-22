@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 
-def create_figure(title, xaxis_label, yaxis_label, run_label, timestamp):
+def create_figure(fig_id, title, xaxis_label, yaxis_label, run_label, timestamp):
 
     # rcParams need to be changed before calling the rest
     plt.rcParams['figure.figsize'] = [9, 6]
     plt.rcParams.update({'font.size': 17})
 
-    fig = plt.figure(1)
+    fig = plt.figure(fig_id,)
 
     ax = fig.add_subplot(111)
     ax.yaxis.set_ticks_position('both')

@@ -25,9 +25,9 @@ def main():
     print(' <<<< Manage output directories >>>>')
     print(' <<<<--------------------------->>>>\n')
     for idx_cbpm in range(config.n_cbpm):
-        util.create_output_directory('results/' + config.cbpm[idx_cbpm])
+        util.create_output_directory('results/' + config.cbpm[idx_cbpm], '')
         for idx_file in range(config.n_data_file):
-            util.create_output_directory('results/' + config.cbpm[idx_cbpm] + '/' + config.data_file_tag[idx_file])
+            util.create_output_directory('results/' + config.cbpm[idx_cbpm] + '/' + config.data_file_tag[idx_file], 'ovwt')
 
     for idx_cbpm in range(config.n_cbpm):
 
@@ -44,15 +44,16 @@ def main():
 
             analyze[idx_cbpm].append(Analyze(raw_button_data[idx_cbpm][idx_file], config, idx_file, idx_cbpm))
             analyze[idx_cbpm][idx_file].raw_button_information()
-            analyze[idx_cbpm][idx_file].vertical_centroid()
-            analyze[idx_cbpm][idx_file].horizontal_centroid()
+            analyze[idx_cbpm][idx_file].centroid()
 
-        summary.single_cbpm(analyze, idx_cbpm)
+        summary.single_cbpm_vs_runo(analyze, idx_cbpm)
+
 
     if config.analysis_type == 'triplet':
         for idx_file in range(config.n_data_file):
             triplet.resolution(analyze, idx_file)
 
+    summary.results_to_text_file(analyze)
 
 
 if __name__ == '__main__':

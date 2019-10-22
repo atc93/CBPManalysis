@@ -20,7 +20,9 @@ class ConfigParser:
         self.analysis_type = config['analysis_type']
         self.kx = config['kx']
         self.ky = config['ky']
-        self.boxcar_avg_maxpow2 = int(config['boxcar_avg_maxpow2'])
+        self.boxcar_avg = int(config['boxcar_avg'])
+        self.apply_boxcar_avg = config['apply_boxcar_avg']
+        self.pedestal_correction = config['pedestal_correction']
 
         self.create_data_file_tag()
 
